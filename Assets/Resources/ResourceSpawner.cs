@@ -7,6 +7,7 @@ public class ResourceSpawner : MonoBehaviour
 
     public GameObject goodResource;
     public GameObject badResource;
+    public GameObject Player;
 
     public int stageWidth = 500;
     public int stageLength = 500;
@@ -26,14 +27,18 @@ public class ResourceSpawner : MonoBehaviour
         float randX;
         float randY;
         float randZ;
+        float randScale;
         for (int i = 0; i < numGood; i++)
         {
             randX = Random.Range(-stageLength / 2, stageLength/ 2);
             randY = Random.Range(1, stageHeight);
             randZ = Random.Range(-stageWidth / 2, stageWidth / 2);
 
+            randScale = Random.Range(Player.GetComponent<PlayerScript>().playerScale * .75f, Player.GetComponent<PlayerScript>().playerScale * 1.25f);
+
             GameObject obj = (GameObject)Instantiate(goodResource);
             obj.transform.position = new Vector3(randX, randY, randZ);
+            obj.transform.localScale = new Vector3 (randScale, randScale,randScale);
             obj.SetActive(true);
             goodRes.Add(obj);
         }
@@ -43,8 +48,11 @@ public class ResourceSpawner : MonoBehaviour
             randY = Random.Range(1, stageHeight);
             randZ = Random.Range(-stageWidth / 2, stageWidth / 2);
 
+            randScale = Random.Range(Player.GetComponent<PlayerScript>().playerScale * .75f, Player.GetComponent<PlayerScript>().playerScale * 1.25f);
+
             GameObject obj = (GameObject)Instantiate(badResource);
             obj.transform.position = new Vector3(randX, randY, randZ);
+            obj.transform.localScale = new Vector3(randScale, randScale, randScale);
             obj.SetActive(true);
             badRes.Add(obj);
         }

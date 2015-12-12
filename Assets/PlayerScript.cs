@@ -5,7 +5,9 @@ public class PlayerScript : MonoBehaviour
 {
 	//Player Attributes
 	public Camera followCamera;
+    //public bool showThings;
 	private Rigidbody playerRigidbody;
+    private float playerStartSpeed = .35f;
 	private float playerSpeed = 0.35f;
 	private float rotationSpeed = 1.0f;
 	public float playerScale = 1.0f;
@@ -16,10 +18,12 @@ public class PlayerScript : MonoBehaviour
 
 	//Jump Action Variables
 	private bool jumping = false;
+    private float startJumpPower = 10.0f;
 	private float jumpForceMultiplier = 10.0f;
 
 	//Dash Action Variables
 	private bool dashing = false;
+    private float dashStartPower = 20.0f;
 	private float dashForceMultiplier = 20.0f;
 	private float dashTimer = 0.0f;
 	private float dashCooldownLength = 3.0f;
@@ -51,6 +55,19 @@ public class PlayerScript : MonoBehaviour
 		current_vertical_offset = Input.GetAxis("Vertical");
 		jump_down = Input.GetButton("Jump");
 		dash_down = Input.GetButton("Dash");
+
+
+        playerSpeed = (playerStartSpeed * playerScale) / 5;
+        if (playerSpeed < .35f)
+            playerSpeed = .35f;
+
+        jumpForceMultiplier = (startJumpPower * playerScale) / 5;
+        if (jumpForceMultiplier < 10.0f)
+            jumpForceMultiplier = 10.0f;
+
+        dashForceMultiplier = (dashStartPower * playerScale) / 5;
+        if (dashForceMultiplier < 20.0f)
+            dashForceMultiplier = 20.0f;
 
 		//Player Movement - in a not so great if block
 		if (current_vertical_offset == 0.0f)
@@ -105,51 +122,58 @@ public class PlayerScript : MonoBehaviour
 														playerSpeed);
 	}
 
-	void OnCollisionEnter(Collision collision)
+    void OnCollisionEnter(Collision collision)
+    {
+        var collidedObject = collision.gameObject;
+
+        if (jumping && collidedObject.tag == "Terrain")
+        {
+            jumping = false;
+        }
+    }
+	void OnTriggerEnter(Collider collision)
 	{
-		var collidedObject = collision.gameObject;
+       // if (showThings)
 
-		if (jumping && collidedObject.tag == "Terrain")
-		{
-			jumping = false;
-		}
+            var collidedObject = collision.gameObject;
 
-		if (collidedObject.tag == "Bad Resource")
-		{
-			/* Collided object needs a uniform scale vector, but you can't >= a vector.
-			 * Currently the resource recycling manager will set uniform scales, so we can just check against a single vector value.
-			 * Otherwise resources need a small script attached with a scale attribute.
-			 */
-			if (playerScale >= collidedObject.transform.localScale.x)
-			{
-                playerRigidbody.isKinematic = true;
-                //Resize the player
-                transform.localScale -= (collidedObject.transform.localScale / 2);
-				//Update internal scale variable for win calculation and such
-				playerScale = transform.localScale.x;
-				//Destroy to be replaced with a recycle command via the Resource Manager
-				Destroy(collidedObject);
-                playerRigidbody.isKinematic = false;
+            if (collidedObject.tag == "Bad Resource")
+            {
+                /* Collided object needs a uniform scale vector, but you can't >= a vector.
+			     * Currently the resource recycling manager will set uniform scales, so we can just check against a single vector value.
+			     * Otherwise resources need a small script attached with a scale attribute.
+			     */
+                if (playerScale >= collidedObject.transform.localScale.x)
+                {
+                    playerRigidbody.isKinematic = true;
+                    //Resize the player
+                    transform.localScale -= (collidedObject.transform.localScale / 5);
+                    //Update internal scale variable for win calculation and such
+                    playerScale = transform.localScale.x;
+                    //Destroy to be replaced with a recycle command via the Resource Manager
+                    Destroy(collidedObject);
+                    playerRigidbody.isKinematic = false;
+                }
             }
-		}
 
-		if (collidedObject.tag == "Good Resource")
-		{
-			/* Collided object needs a uniform scale vector, but you can't >= a vector.
-			 * Currently the resource recycling manager will set uniform scales, so we can just check against a single vector value.
-			 * Otherwise resources need a small script attached with a scale attribute.
-			 */
-			if (playerScale >= collidedObject.transform.localScale.x)
-			{
-				playerRigidbody.isKinematic = true;
-				//Resize the player
-				transform.localScale += (collidedObject.transform.localScale / 2);
-				//Update internal scale variable for win calculation and such
-				playerScale = transform.localScale.x;
-				//Destroy to be replaced with a recycle command via the Resource Manager
-				Destroy(collidedObject);
-				playerRigidbody.isKinematic = false;
-			}
-		}
+            if (collidedObject.tag == "Good Resource")
+            {
+                /* Collided object needs a uniform scale vector, but you can't >= a vector.
+			     * Currently the resource recycling manager will set uniform scales, so we can just check against a single vector value.
+			     * Otherwise resources need a small script attached with a scale attribute.
+			     */
+
+
+                if (playerScale >= collidedObject.transform.localScale.x)
+                {
+                    //Resize the player
+                    transform.localScale += (collidedObject.transform.localScale / 5);
+                    //Update internal scale variable for win calculation and such
+                    playerScale = transform.localScale.x;
+                    //Destroy to be replaced with a recycle command via the Resource Manager
+                    Destroy(collidedObject);
+                }
+            }
+       
 	}
 }
