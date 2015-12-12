@@ -18,14 +18,16 @@ public class PlayerScript : MonoBehaviour
 
 	/*Resources are tagged as good and bad (literally, i.e. "Bad Resource") for the purpose of collision detection for the short-term.
 	 *Base scale of blob is currently: 1
-	 *As the player eats new good objects, increase scale by "some" modifier.
+	 *As the player eats new good objects, increase scale by "some" modifier. (For now, we will increase our scale by 1/2 the collided object's scale)
 	 *Bad things decrease scale; when the scale hits a certain threshold the level should be able to end.
 	 */
+	float myScale = 1f;
 
 	// Use this for initialization
 	void Start ()
 	{
 		playerRigidbody = this.GetComponent<Rigidbody>();
+		transform.localScale = new Vector3(myScale , myScale , myScale);
 	}
 
 	// Update is called once per frame; FixedUpdate per physics step
@@ -56,13 +58,17 @@ public class PlayerScript : MonoBehaviour
 
 	void OnCollisionEnter(Collision collision)
 	{
-		if(collision.gameObject.tag == "Bad Resource")
+		var collidedObject = collision.gameObject;
+		if(collidedObject.tag == "Bad Resource")
 		{
 			Debug.Log("BAD THING HIT");
 		}
-		if (collision.gameObject.tag == "Good Resource")
+		if (collidedObject.tag == "Good Resource")
 		{
 			Debug.Log("GOOD THING HIT");
+			//if(this.transform.localScale >= collidedObject.transform.localScale) //collided object needs a uniform scale vector, but you can't >= a vector. Needs a small script attached with a scale attribute
+			this.transform.localScale += (collidedObject.transform.localScale / 2);
+			Destroy(collidedObject);
 		}
 	}
 }
