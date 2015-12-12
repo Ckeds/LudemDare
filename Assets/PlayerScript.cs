@@ -5,10 +5,9 @@ public class PlayerScript : MonoBehaviour
 {
 	//Player Attributes
 	public Camera followCamera;
-    //public bool showThings;
 	private Rigidbody playerRigidbody;
-    private float playerStartSpeed = .35f;
-	private float playerSpeed = 0.35f;
+	private float playerSpeedFloor = 0.35f;
+	private float playerSpeed;
 	private float rotationSpeed = 1.0f;
 	public float playerScale = 1.0f;
 	/*Resources are tagged as good and bad (literally, i.e. "Bad Resource") for the purpose of collision detection for the short-term.
@@ -18,13 +17,13 @@ public class PlayerScript : MonoBehaviour
 
 	//Jump Action Variables
 	private bool jumping = false;
-    private float startJumpPower = 10.0f;
-	private float jumpForceMultiplier = 10.0f;
+	private float jumpForceFloor = 10.0f;
+	private float jumpForceMultiplier;
 
 	//Dash Action Variables
 	private bool dashing = false;
-    private float dashStartPower = 20.0f;
-	private float dashForceMultiplier = 20.0f;
+	private float dashForceFloor = 20.0f;
+	private float dashForceMultiplier;
 	private float dashTimer = 0.0f;
 	private float dashCooldownLength = 3.0f;
 	
@@ -56,29 +55,22 @@ public class PlayerScript : MonoBehaviour
 		jump_down = Input.GetButton("Jump");
 		dash_down = Input.GetButton("Dash");
 
+		//Force Multiplier Calculation
+		playerSpeed = (playerSpeedFloor * playerScale) / 5;
+		if (playerSpeed < playerSpeedFloor) playerSpeed = playerSpeedFloor;
 
-        playerSpeed = (playerStartSpeed * playerScale) / 5;
-        if (playerSpeed < .35f)
-            playerSpeed = .35f;
+		jumpForceMultiplier = (jumpForceFloor * playerScale) / 5;
+		if (jumpForceMultiplier < jumpForceFloor) jumpForceMultiplier = jumpForceFloor;
 
-        jumpForceMultiplier = (startJumpPower * playerScale) / 5;
-        if (jumpForceMultiplier < 10.0f)
-            jumpForceMultiplier = 10.0f;
+		dashForceMultiplier = (dashForceFloor * playerScale) / 5;
+		if (dashForceMultiplier < dashForceFloor) dashForceMultiplier = dashForceFloor;
 
-        dashForceMultiplier = (dashStartPower * playerScale) / 5;
-        if (dashForceMultiplier < 20.0f)
-            dashForceMultiplier = 20.0f;
-
-		//Player Movement - in a not so great if block
-		if (current_vertical_offset == 0.0f)
-		{
-			//do nothing; again, this is bad and needs to be changed
-		}
-		else if(current_vertical_offset < 0f) //S or Down when not using a joystick
+		//Player Movement
+		if(current_vertical_offset < 0f) //S or Down when not using a joystick
 		{
 			playerRigidbody.AddForce(-playerRigidbody.transform.forward * playerSpeed, ForceMode.Impulse);
 		}
-		else // less than 0; W or Up when not using a joystick
+		else if (current_vertical_offset > 0f) // W or Up when not using a joystick
 		{
 			playerRigidbody.AddForce(playerRigidbody.transform.forward * playerSpeed, ForceMode.Impulse);
 		}
@@ -122,58 +114,56 @@ public class PlayerScript : MonoBehaviour
 														playerSpeed);
 	}
 
-    void OnCollisionEnter(Collision collision)
-    {
-        var collidedObject = collision.gameObject;
+	void OnCollisionEnter(Collision collision)
+	{
+		var collidedObject = collision.gameObject;
 
-        if (jumping && collidedObject.tag == "Terrain")
-        {
-            jumping = false;
-        }
-    }
+		if (jumping && collidedObject.tag == "Terrain")
+		{
+			jumping = false;
+		}
+	}
 	void OnTriggerEnter(Collider collision)
 	{
-       // if (showThings)
+		var collidedObject = collision.gameObject;
 
-            var collidedObject = collision.gameObject;
+		if (collidedObject.tag == "Bad Resource")
+		{
+			/* Collided object needs a uniform scale vector, but you can't >= a vector.
+				* Currently the resource recycling manager will set uniform scales, so we can just check against a single vector value.
+				* Otherwise resources need a small script attached with a scale attribute.
+				*/
+			if (playerScale >= collidedObject.transform.localScale.x)
+			{
+				playerRigidbody.isKinematic = true;
+				//Resize the player
+				transform.localScale -= (collidedObject.transform.localScale / 5);
+				//Update internal scale variable for win calculation and such
+				playerScale = transform.localScale.x;
+				//Destroy to be replaced with a recycle command via the Resource Manager
+				Destroy(collidedObject);
+				playerRigidbody.isKinematic = false;
+			}
+		}
 
-            if (collidedObject.tag == "Bad Resource")
-            {
-                /* Collided object needs a uniform scale vector, but you can't >= a vector.
-			     * Currently the resource recycling manager will set uniform scales, so we can just check against a single vector value.
-			     * Otherwise resources need a small script attached with a scale attribute.
-			     */
-                if (playerScale >= collidedObject.transform.localScale.x)
-                {
-                    playerRigidbody.isKinematic = true;
-                    //Resize the player
-                    transform.localScale -= (collidedObject.transform.localScale / 5);
-                    //Update internal scale variable for win calculation and such
-                    playerScale = transform.localScale.x;
-                    //Destroy to be replaced with a recycle command via the Resource Manager
-                    Destroy(collidedObject);
-                    playerRigidbody.isKinematic = false;
-                }
-            }
-
-            if (collidedObject.tag == "Good Resource")
-            {
-                /* Collided object needs a uniform scale vector, but you can't >= a vector.
-			     * Currently the resource recycling manager will set uniform scales, so we can just check against a single vector value.
-			     * Otherwise resources need a small script attached with a scale attribute.
-			     */
+		if (collidedObject.tag == "Good Resource")
+		{
+			/* Collided object needs a uniform scale vector, but you can't >= a vector.
+				* Currently the resource recycling manager will set uniform scales, so we can just check against a single vector value.
+				* Otherwise resources need a small script attached with a scale attribute.
+				*/
 
 
-                if (playerScale >= collidedObject.transform.localScale.x)
-                {
-                    //Resize the player
-                    transform.localScale += (collidedObject.transform.localScale / 5);
-                    //Update internal scale variable for win calculation and such
-                    playerScale = transform.localScale.x;
-                    //Destroy to be replaced with a recycle command via the Resource Manager
-                    Destroy(collidedObject);
-                }
-            }
-       
+			if (playerScale >= collidedObject.transform.localScale.x)
+			{
+				//Resize the player
+				transform.localScale += (collidedObject.transform.localScale / 5);
+				//Update internal scale variable for win calculation and such
+				playerScale = transform.localScale.x;
+				//Destroy to be replaced with a recycle command via the Resource Manager
+				Destroy(collidedObject);
+			}
+		}
+	   
 	}
 }
