@@ -122,13 +122,15 @@ public class PlayerScript : MonoBehaviour
 			 */
 			if (playerScale >= collidedObject.transform.localScale.x)
 			{
-				//Resize the player
-				transform.localScale -= (collidedObject.transform.localScale / 2);
+                playerRigidbody.isKinematic = true;
+                //Resize the player
+                transform.localScale -= (collidedObject.transform.localScale / 2);
 				//Update internal scale variable for win calculation and such
 				playerScale = transform.localScale.x;
 				//Destroy to be replaced with a recycle command via the Resource Manager
 				Destroy(collidedObject);
-			}
+                playerRigidbody.isKinematic = false;
+            }
 		}
 
 		if (collidedObject.tag == "Good Resource")
@@ -139,12 +141,14 @@ public class PlayerScript : MonoBehaviour
 			 */
 			if (playerScale >= collidedObject.transform.localScale.x)
 			{
+				playerRigidbody.isKinematic = true;
 				//Resize the player
 				transform.localScale += (collidedObject.transform.localScale / 2);
 				//Update internal scale variable for win calculation and such
 				playerScale = transform.localScale.x;
 				//Destroy to be replaced with a recycle command via the Resource Manager
 				Destroy(collidedObject);
+				playerRigidbody.isKinematic = false;
 			}
 		}
 	}
