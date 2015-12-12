@@ -64,8 +64,4 @@ public class ResourceSpawner : MonoBehaviour
 	{
 	
 	}
-	void moveObject(GameObject o)
-	{
-
-	}
 }

@@ -4,8 +4,6 @@ using System.Collections;
 public class PlayerScript : MonoBehaviour
 {
 	//Player Attributes
-	public Camera followCamera;
-	private Rigidbody playerRigidbody;
 	private float playerSpeedFloor = 0.35f;
 	private float playerSpeed;
 	private float rotationSpeed = 1.0f;
@@ -33,17 +31,25 @@ public class PlayerScript : MonoBehaviour
 	private bool jump_down = false;
 	private bool dash_down = false;
 
+	//Player References
+	private Camera followCamera;
+	private Rigidbody playerRigidbody;
+	private ResourceSpawner gameSpawner;
+
 	// Use this for initialization
 	void Start ()
 	{
 		//Snag a reference to the player's Rigidbody
 		playerRigidbody = GetComponent<Rigidbody>();
 
-		//Set Default Player Scale
-		transform.localScale = new Vector3(playerScale , playerScale , playerScale);
-
 		//set up initial follow camera position
 		followCamera = Camera.main;
+
+		//ResourceSpawner Reference
+		gameSpawner = GameObject.FindGameObjectWithTag("ResourceSpawner").GetComponent<ResourceSpawner>();
+
+		//Set Default Player Scale - We are assuming that the player prefab is uniformly scaled on Start()
+		playerScale = transform.localScale.x;
 	}
 
 	// Update is called once per frame; FixedUpdate per physics step
@@ -148,7 +154,7 @@ public class PlayerScript : MonoBehaviour
 
 		if (collidedObject.tag == "Good Resource")
 		{
-		    /* Collided object needs a uniform scale vector, but you can't >= a vector.
+			/* Collided object needs a uniform scale vector, but you can't >= a vector.
 			*  Currently the resource recycling manager will set uniform scales, so we can just check against a single vector value.
 			*  Otherwise resources need a small script attached with a scale attribute.
 			*/
