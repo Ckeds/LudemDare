@@ -4,15 +4,16 @@ using System.Collections;
 public class PlayerScript : MonoBehaviour
 {
 	Rigidbody playerRigidbody;
-	float playerSpeed = 5f;
+	float playerSpeed = .1f;
+	float rotationSpeed = 0.5f;
 
 	//Quick and dirty way to get the data we need from the input manager to move us around.
 	//Check the Input Manager in Edit-> Project Settings-> Input for more.
 
-	float current_horizontal_offset;
-	float current_vertical_offset;
-	bool fire1_down;
-	bool fire2_down;
+	float current_horizontal_offset = 0f;
+	float current_vertical_offset = 0f;
+	bool jump_down = false;
+	bool dash_down = false;
 
 	//Resources are tagged as good and bad (literally, i.e. "Bad Resource") for the purpose of collision detection for the short-term.
 
@@ -22,25 +23,30 @@ public class PlayerScript : MonoBehaviour
 		playerRigidbody = this.GetComponent<Rigidbody>();
 	}
 	
-	// Update is called once per frame
-	void Update ()
+	// Update is called once per frame; FixedUpdate per physics step
+	void FixedUpdate ()
 	{
 		current_horizontal_offset = Input.GetAxis("Horizontal");
 		current_vertical_offset = Input.GetAxis("Vertical");
-		fire1_down = Input.GetButton("Fire1");
-		fire2_down = Input.GetButton("Fire2");
+		jump_down = Input.GetButton("Jump");
+		dash_down = Input.GetButton("Dash");
 
-		if (current_horizontal_offset == 0.0f)
+		//Movement - in a not so great if block
+		if (current_vertical_offset == 0.0f)
 		{
-		    //do nothing	
+			//do nothing	
 		}
-		else if(current_horizontal_offset < 0)
+		else if(current_vertical_offset < 0f) //S or Down
 		{
-			playerRigidbody.AddRelativeForce(Vector3.left * playerSpeed);
+			transform.Translate(Vector3.back * playerSpeed);
 		}
-		else // greater than 0
+		else // less than 0; W or Up
 		{
-			playerRigidbody.AddRelativeForce(Vector3.right * playerSpeed);
+			transform.Translate(Vector3.forward * playerSpeed);
 		}
+
+		//Rotation
+		transform.Rotate(new Vector3(0, (current_horizontal_offset * rotationSpeed), 0), Space.World);
+
 	}
 }
