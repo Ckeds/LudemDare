@@ -21,22 +21,32 @@ public class ResourceSpawner : MonoBehaviour
 	// Use this for initialization
 	void Start ()
     {
+        goodRes = new List<GameObject>();
+        badRes = new List<GameObject>();
         float randX;
         float randY;
         float randZ;
         for (int i = 0; i < numGood; i++)
         {
-            randX = Random.Range(1, stageLength);
+            randX = Random.Range(-stageLength / 2, stageLength/ 2);
             randY = Random.Range(1, stageHeight);
-            randZ = Random.Range(1, stageWidth);
+            randZ = Random.Range(-stageWidth / 2, stageWidth / 2);
 
-            //GameObject obj = (GameObject)Instantiate(goodResource);
-            //obj.SetActive(false);
-            //goodRes.Add(obj);
+            GameObject obj = (GameObject)Instantiate(goodResource);
+            obj.transform.position = new Vector3(randX, randY, randZ);
+            obj.SetActive(true);
+            goodRes.Add(obj);
         }
         for (int i = 0; i < numBad; i++)
         {
+            randX = Random.Range(-stageLength / 2, stageLength / 2);
+            randY = Random.Range(1, stageHeight);
+            randZ = Random.Range(-stageWidth / 2, stageWidth / 2);
 
+            GameObject obj = (GameObject)Instantiate(badResource);
+            obj.transform.position = new Vector3(randX, randY, randZ);
+            obj.SetActive(true);
+            badRes.Add(obj);
         }
     }
 	
