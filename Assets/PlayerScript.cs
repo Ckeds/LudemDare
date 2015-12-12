@@ -1,12 +1,11 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class PlayerScript : MonoBehaviour
 {
-	//Player Attributes
 	Rigidbody playerRigidbody;
-	float playerSpeed = .2f;
-	float rotationSpeed = 0.75f;
+	float playerSpeed = .1f;
+	float rotationSpeed = 0.5f;
 
 	//Quick and dirty way to get the data we need from the input manager to move us around.
 	//Check the Input Manager in Edit-> Project Settings-> Input for more.
@@ -16,18 +15,14 @@ public class PlayerScript : MonoBehaviour
 	bool jump_down = false;
 	bool dash_down = false;
 
-	/*Resources are tagged as good and bad (literally, i.e. "Bad Resource") for the purpose of collision detection for the short-term.
-	 *Base scale of blob is currently: 1
-	 *As the player eats new good objects, increase scale by "some" modifier.
-	 *Bad things decrease scale; when the scale hits a certain threshold the level should be able to end.
-	 */
+	//Resources are tagged as good and bad (literally, i.e. "Bad Resource") for the purpose of collision detection for the short-term.
 
 	// Use this for initialization
 	void Start ()
 	{
 		playerRigidbody = this.GetComponent<Rigidbody>();
 	}
-
+	
 	// Update is called once per frame; FixedUpdate per physics step
 	void FixedUpdate ()
 	{
@@ -39,7 +34,7 @@ public class PlayerScript : MonoBehaviour
 		//Movement - in a not so great if block
 		if (current_vertical_offset == 0.0f)
 		{
-			//do nothing
+			//do nothing	
 		}
 		else if(current_vertical_offset < 0f) //S or Down
 		{
@@ -52,17 +47,6 @@ public class PlayerScript : MonoBehaviour
 
 		//Rotation
 		transform.Rotate(new Vector3(0, (current_horizontal_offset * rotationSpeed), 0), Space.World);
-	}
 
-	void OnCollisionEnter(Collision collision)
-	{
-		if(collision.gameObject.tag == "Bad Resource")
-		{
-			Debug.Log("BAD THING HIT");
-		}
-		if (collision.gameObject.tag == "Good Resource")
-		{
-			Debug.Log("GOOD THING HIT");
-		}
 	}
 }
