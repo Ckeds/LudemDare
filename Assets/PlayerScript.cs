@@ -4,9 +4,9 @@ using System.Collections;
 public class PlayerScript : MonoBehaviour
 {
 	//Player Attributes
-	private float playerSpeedFloor = 0.35f;
+	public float playerSpeedFloor = 0.45f;
 	private float playerSpeed;
-	private float rotationSpeed = 1.0f;
+	public float rotationSpeed = 1.25f;
 	public float playerScale = 1.0f;
 	/*Resources are tagged as good and bad (literally, i.e. "Bad Resource") for the purpose of collision detection for the short-term.
 	 *As the player eats new good objects, increase scale by "some" modifier. (For now, we will increase our scale by 1/2 the collided object's scale).
@@ -15,12 +15,12 @@ public class PlayerScript : MonoBehaviour
 
 	//Jump Action Variables
 	private bool jumping = false;
-	private float jumpForceFloor = 10.0f;
+	public float jumpForceFloor = 10.0f;
 	private float jumpForceMultiplier;
 
 	//Dash Action Variables
 	private bool dashing = false;
-	private float dashForceFloor = 20.0f;
+	public float dashForceFloor = 20.0f;
 	private float dashForceMultiplier;
 	private float dashTimer = 0.0f;
 	private float dashCooldownLength = 3.0f;
@@ -61,14 +61,22 @@ public class PlayerScript : MonoBehaviour
 		jump_down = Input.GetButton("Jump");
 		dash_down = Input.GetButton("Dash");
 
-		//Force Multiplier Calculation
-		playerSpeed = (playerSpeedFloor * playerScale) / 5;
+        //Force Multiplier Calculation
+
+        playerRigidbody.mass = playerScale / 2;
+
+        if (playerRigidbody.mass <= 1)
+            playerRigidbody.mass = 1;
+        else if (playerRigidbody.mass >= 10)
+            playerRigidbody.mass = 10;
+
+        playerSpeed = (playerSpeedFloor * playerScale * playerRigidbody.mass) / 4;
 		if (playerSpeed < playerSpeedFloor) playerSpeed = playerSpeedFloor;
 
-		jumpForceMultiplier = (jumpForceFloor * playerScale) / 5;
+		jumpForceMultiplier = (jumpForceFloor * playerScale * playerRigidbody.mass) / 2;
 		if (jumpForceMultiplier < jumpForceFloor) jumpForceMultiplier = jumpForceFloor;
 
-		dashForceMultiplier = (dashForceFloor * playerScale) / 5;
+		dashForceMultiplier = (dashForceFloor * playerScale * playerRigidbody.mass) / 2;
 		if (dashForceMultiplier < dashForceFloor) dashForceMultiplier = dashForceFloor;
 
 		//Player Movement
@@ -143,11 +151,13 @@ public class PlayerScript : MonoBehaviour
 			{
 				playerRigidbody.isKinematic = true;
 				//Resize the player
-				transform.localScale -= (collidedObject.transform.localScale / 5);
+				transform.localScale -= (collidedObject.transform.localScale * .5f);
 				//Update internal scale variable for win calculation and such
 				playerScale = transform.localScale.x;
-				//Destroy to be replaced with a recycle command via the Resource Manager
-				Destroy(collidedObject);
+                //Destroy to be replaced with a recycle command via the Resource Manager
+                //Destroy(collidedObject);
+                collidedObject.SetActive(false);
+                gameSpawner.recycleObject(collidedObject);
 				playerRigidbody.isKinematic = false;
 			}
 		}
@@ -161,13 +171,25 @@ public class PlayerScript : MonoBehaviour
 			if (playerScale >= collidedObject.transform.localScale.x)
 			{
 				//Resize the player
-				transform.localScale += (collidedObject.transform.localScale / 5);
+				transform.localScale += (collidedObject.transform.localScale * .1f);
 				//Update internal scale variable for win calculation and such
 				playerScale = transform.localScale.x;
-				//Destroy to be replaced with a recycle command via the Resource Manager
-				Destroy(collidedObject);
-			}
+                //Destroy to be replaced with a recycle command via the Resource Manager
+                //Destroy(collidedObject);
+                collidedObject.SetActive(false);
+                gameSpawner.recycleObject(collidedObject);
+            }
 		}
-	   
-	}
+       
+
+    }
+    public void resetPlayer()
+    {
+        playerScale = 1;
+        playerRigidbody.mass = 1;
+        playerSpeed = playerSpeedFloor;
+        dashForceMultiplier = dashForceFloor;
+        jumpForceMultiplier = jumpForceFloor;
+        transform.position = new Vector3(0, 1, 0);
+    }
 }
