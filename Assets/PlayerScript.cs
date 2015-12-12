@@ -130,9 +130,9 @@ public class PlayerScript : MonoBehaviour
 		if (collidedObject.tag == "Bad Resource")
 		{
 			/* Collided object needs a uniform scale vector, but you can't >= a vector.
-				* Currently the resource recycling manager will set uniform scales, so we can just check against a single vector value.
-				* Otherwise resources need a small script attached with a scale attribute.
-				*/
+			* Currently the resource recycling manager will set uniform scales, so we can just check against a single vector value.
+			* Otherwise resources need a small script attached with a scale attribute.
+			*/
 			if (playerScale >= collidedObject.transform.localScale.x)
 			{
 				playerRigidbody.isKinematic = true;
@@ -148,12 +148,10 @@ public class PlayerScript : MonoBehaviour
 
 		if (collidedObject.tag == "Good Resource")
 		{
-			/* Collided object needs a uniform scale vector, but you can't >= a vector.
-				* Currently the resource recycling manager will set uniform scales, so we can just check against a single vector value.
-				* Otherwise resources need a small script attached with a scale attribute.
-				*/
-
-
+		    /* Collided object needs a uniform scale vector, but you can't >= a vector.
+			*  Currently the resource recycling manager will set uniform scales, so we can just check against a single vector value.
+			*  Otherwise resources need a small script attached with a scale attribute.
+			*/
 			if (playerScale >= collidedObject.transform.localScale.x)
 			{
 				//Resize the player
