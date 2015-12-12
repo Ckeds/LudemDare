@@ -90,8 +90,14 @@ public class PlayerScript : MonoBehaviour
 			}
 		}
 
-		//Camera update code
-		followCamera.transform.position = Vector3.Lerp(followCamera.transform.position, new Vector3(transform.position.x + (transform.forward.x * (-5f * playerScale)), transform.position.y + (2f * playerScale), transform.position.z + (transform.forward.z * (-5f * playerScale))), playerSpeed);
+		//Camera update code; the 2 and 5 are unfortunately magic numbers based on where we had previously positioned the camera manually to get the view and angle we wanted.
+		Debug.Log("Forward:" + transform.forward);
+		followCamera.transform.position = Vector3.Lerp(followCamera.transform.position,
+														new Vector3(transform.position.x + (transform.forward.x * -5f * playerScale),
+																	transform.position.y + (2f * playerScale),
+																	transform.position.z + (transform.forward.z * -5f * playerScale)
+																	),
+														playerSpeed);
 	}
 
 	void OnCollisionEnter(Collision collision)
@@ -106,7 +112,10 @@ public class PlayerScript : MonoBehaviour
 			 */
 			if (playerScale >= collidedObject.transform.localScale.x)
 			{
+				//Resize the player
 				this.transform.localScale -= (collidedObject.transform.localScale / 2);
+				//Update internal scale variable for win calculation and such
+				playerScale = transform.localScale.x;
 				//Destroy to be replaced with a recycle command via the Resource Manager
 				Destroy(collidedObject);
 			}
@@ -120,7 +129,10 @@ public class PlayerScript : MonoBehaviour
 			 */
 			if (playerScale >= collidedObject.transform.localScale.x)
 			{
+				//Resize the player
 				this.transform.localScale += (collidedObject.transform.localScale / 2);
+				//Update internal scale variable for win calculation and such
+				playerScale = transform.localScale.x;
 				//Destroy to be replaced with a recycle command via the Resource Manager
 				Destroy(collidedObject);
 			}
