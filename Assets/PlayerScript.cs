@@ -5,14 +5,15 @@ public class PlayerScript : MonoBehaviour
 {
 	//Player Attributes
 	private Rigidbody playerRigidbody;
-	private float playerSpeed = 0.2f;
-	private float rotationSpeed = 0.75f;
+	private float playerSpeed = 0.35f;
+	private float rotationSpeed = 1.0f;
 	private float jumpForceMultiplier = 10.0f;
 	private bool jumping = false;
-	private float dashForceMultiplier = 10.0f;
+	private float dashForceMultiplier = 20.0f;
 	private float dashTimer = 0.0f;
 	private float dashCooldownLength = 3.0f;
 	private bool dashing = false;
+	public Camera followCamera;
 
 	/*Resources are tagged as good and bad (literally, i.e. "Bad Resource") for the purpose of collision detection for the short-term.
 	 *Base scale of blob is currently: 1
@@ -33,6 +34,9 @@ public class PlayerScript : MonoBehaviour
 	{
 		playerRigidbody = this.GetComponent<Rigidbody>();
 		transform.localScale = new Vector3(playerScale , playerScale , playerScale);
+
+		//set up initial follow camera position
+		followCamera = Camera.main;
 	}
 
 	// Update is called once per frame; FixedUpdate per physics step
@@ -59,6 +63,7 @@ public class PlayerScript : MonoBehaviour
 
 		//Rotation
 		transform.Rotate(new Vector3(0, (current_horizontal_offset * rotationSpeed), 0), Space.World);
+		followCamera.transform.Rotate(new Vector3(0, (current_horizontal_offset * rotationSpeed), 0), Space.World);
 
 		//Player Action Buttons
 		if(jump_down && !jumping)
@@ -84,6 +89,9 @@ public class PlayerScript : MonoBehaviour
 				dashTimer = 0.0f;
 			}
 		}
+
+		//Camera update code
+		followCamera.transform.position = Vector3.Lerp(followCamera.transform.position, new Vector3(transform.position.x + (transform.forward.x * (-5f * playerScale)), transform.position.y + (2f * playerScale), transform.position.z + (transform.forward.z * (-5f * playerScale))), playerSpeed);
 	}
 
 	void OnCollisionEnter(Collision collision)
