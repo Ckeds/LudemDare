@@ -13,6 +13,8 @@ public class ResourceSpawner : MonoBehaviour
 	public int stageLength = 500;
 	public int stageHeight = 50;
 
+    public int playerSpawnDist = 50;
+
 	public int numGood = 1000;
 	public int numBad = 1000;
 
@@ -83,9 +85,9 @@ public class ResourceSpawner : MonoBehaviour
         //randY = Random.Range(1, stageHeight);
         //randZ = Random.Range(-stageWidth / 2, stageWidth / 2);
 
-        randX = Random.Range(Player.transform.position.x - 50, Player.transform.position.x + 50);
-        randY = Random.Range(1, stageHeight);
-        randZ = Random.Range(Player.transform.position.z - 50, Player.transform.position.z + 50);
+        randX = Random.Range(Player.transform.position.x - playerSpawnDist, Player.transform.position.x + playerSpawnDist);
+        randY = Random.Range(Player.transform.position.y+5, Player.transform.position.y + 25);
+        randZ = Random.Range(Player.transform.position.z - playerSpawnDist, Player.transform.position.z + playerSpawnDist);
 
         if (randX >= stageWidth/2)
             randX = (stageWidth/2) - 1;
@@ -97,7 +99,7 @@ public class ResourceSpawner : MonoBehaviour
         else if (randX <= -stageLength / 2)
             randX = (-stageLength / 2) + 1;
 
-        randScale = Random.Range(Player.GetComponent<PlayerScript>().playerScale * .75f, Player.GetComponent<PlayerScript>().playerScale * 1.25f);
+        randScale = Random.Range(Player.GetComponent<PlayerScript>().playerScale * .5f, Player.GetComponent<PlayerScript>().playerScale * 1.25f);
         
         o.transform.position = new Vector3(randX, randY, randZ);
         o.transform.localScale = new Vector3(randScale, randScale, randScale);

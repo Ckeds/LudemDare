@@ -8,6 +8,7 @@ public class PlayerScript : MonoBehaviour
 	private float playerSpeed;
 	public float rotationSpeed = 1.5f;
 	public float playerScale = 1.0f;
+    public int playerScore = 0;
 	/*Resources are tagged as good and bad (literally, i.e. "Bad Resource") for the purpose of collision detection for the short-term.
 	 *As the player eats new good objects, increase scale by "some" modifier. (For now, we will increase our scale by 1/2 the collided object's scale).
 	 *Bad things decrease scale; when the scale hits a certain threshold the level should be able to end.
@@ -16,17 +17,17 @@ public class PlayerScript : MonoBehaviour
 	//Jump Action Variables
 	private bool jumping = false;
 	public float jumpForceFloor = 1.0f;
-	private float jumpForceMultiplier;
-	private float jumpSpoolTimer = 0.0f;
-	private float maxJumpSpoolTime = 1.5f;
+	private float jumpForceMultiplier; 
+	private float jumpSpoolTimer = 0.0f; public float GetJumpTime() { return jumpSpoolTimer; } //needed for UI
+    private float maxJumpSpoolTime = 1.5f;
 
 	//Dash Action Variables
 	private bool dashing = false;
-	private float dashSpoolTimer = 0.0f;
-	private float maxDashSpoolTime = 1.0f;
+	private float dashSpoolTimer = 0.0f; public float GetDashTime() { return dashSpoolTimer; } //needed for UI
+    private float maxDashSpoolTime = 1.0f;
 	public float dashForceFloor = 1.0f;
-	private float dashForceMultiplier;
-	private float dashCooldownTimer = 0.0f;
+	private float dashForceMultiplier; 
+    private float dashCooldownTimer = 0.0f;
 	private float dashCooldownLength = 3.0f;
 
 	//Player Input Variables; Check the Input Manager found in Edit-> Project Settings-> Input for more.
@@ -59,8 +60,10 @@ public class PlayerScript : MonoBehaviour
 	// Update is called once per frame; FixedUpdate per physics step
 	void FixedUpdate ()
 	{
-		//Time Variable for use with incrementing timers
-		var deltaTime = Time.deltaTime;
+        playerScore = (int)(playerScale - 1) * 100;
+
+        //Time Variable for use with incrementing timers
+        var deltaTime = Time.deltaTime;
 
 		//Update Input variables
 		current_horizontal_offset = Input.GetAxis("Horizontal");
@@ -182,7 +185,9 @@ public class PlayerScript : MonoBehaviour
 				//Recycle the object
 				collidedObject.SetActive(false);
 				gameSpawner.recycleObject(collidedObject);
-				//playerRigidbody.isKinematic = false;
+                //playerRigidbody.isKinematic = false;
+
+                
 			}
 		}
 
@@ -202,7 +207,7 @@ public class PlayerScript : MonoBehaviour
 				//Recycle the object
 				collidedObject.SetActive(false);
 				gameSpawner.recycleObject(collidedObject);
-				//playerRigidbody.isKinematic = false;
+                //playerRigidbody.isKinematic = false;
 			}
 		}
 	}
