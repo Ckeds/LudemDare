@@ -18,11 +18,12 @@ public class PlayerScript : MonoBehaviour
 	public float jumpForceFloor = 10.0f;
 	private float jumpForceMultiplier;
 	private float jumpSpoolTimer = 0.0f;
-	private float maxJumpSpoolTime = 0.5f;
+	private float maxJumpSpoolTime = 1.5f;
 
 	//Dash Action Variables
 	private bool dashing = false;
 	private float dashSpoolTimer = 0.0f;
+	private float maxDashSpoolTime = 1.0f;
 	public float dashForceFloor = 20.0f;
 	private float dashForceMultiplier;
 	private float dashCooldownTimer = 0.0f;
@@ -107,7 +108,7 @@ public class PlayerScript : MonoBehaviour
 		{
 			//the maximum amount of time jump should affect the player is currently meant to be 1 second.
 			jumpSpoolTimer += deltaTime;
-			if (jumpSpoolTimer >= 1.5f)
+			if (jumpSpoolTimer >= maxJumpSpoolTime)
 			{
 				jumping = true;
 				playerRigidbody.AddForce(playerRigidbody.transform.up * jumpForceMultiplier * (1 + jumpSpoolTimer), ForceMode.Impulse);
@@ -127,7 +128,7 @@ public class PlayerScript : MonoBehaviour
 		{
 			//the maximum amount of time jump should affect the player is currently meant to be 1 second.
 			dashSpoolTimer += deltaTime;
-			if (dashSpoolTimer >= 1.0f)
+			if (dashSpoolTimer >= maxDashSpoolTime)
 			{
 				dashing = true;
 				playerRigidbody.AddForce(playerRigidbody.transform.forward * dashForceMultiplier * (1 + dashSpoolTimer), ForceMode.Impulse);
@@ -137,10 +138,10 @@ public class PlayerScript : MonoBehaviour
 		}
 		else if (!dash_down && jumpSpoolTimer > 0.0f)
 		{
-            dashing = true;
-            playerRigidbody.AddForce(playerRigidbody.transform.forward * dashForceMultiplier * (1 + dashSpoolTimer), ForceMode.Impulse);
-            dashSpoolTimer = 0.0f;
-        }
+			dashing = true;
+			playerRigidbody.AddForce(playerRigidbody.transform.forward * dashForceMultiplier * (1 + dashSpoolTimer), ForceMode.Impulse);
+			dashSpoolTimer = 0.0f;
+		}
 
 		//Update Dash state/timer
 		if(dashing)
