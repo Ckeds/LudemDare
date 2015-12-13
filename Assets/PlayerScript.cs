@@ -17,12 +17,15 @@ public class PlayerScript : MonoBehaviour
 	private bool jumping = false;
 	public float jumpForceFloor = 10.0f;
 	private float jumpForceMultiplier;
+	private float jumpSpoolTimer = 0.0f;
+	private float maxJumpSpoolTime = 0.5f;
 
 	//Dash Action Variables
 	private bool dashing = false;
+	private float dashSpoolTimer = 0.0f;
 	public float dashForceFloor = 20.0f;
 	private float dashForceMultiplier;
-	private float dashTimer = 0.0f;
+	private float dashCooldownTimer = 0.0f;
 	private float dashCooldownLength = 3.0f;
 	
 	//Player Input Variables; Check the Input Manager found in Edit-> Project Settings-> Input for more.
@@ -55,22 +58,22 @@ public class PlayerScript : MonoBehaviour
 	// Update is called once per frame; FixedUpdate per physics step
 	void FixedUpdate ()
 	{
+		//Time Variable for use with incrementing timers
+		var deltaTime = Time.deltaTime;
+
 		//Update Input variables
 		current_horizontal_offset = Input.GetAxis("Horizontal");
 		current_vertical_offset = Input.GetAxis("Vertical");
 		jump_down = Input.GetButton("Jump");
 		dash_down = Input.GetButton("Dash");
 
-        //Force Multiplier Calculation
+		//Player Mass Calculation
+		playerRigidbody.mass = playerScale / 2.0f;
+		if (playerRigidbody.mass <= 1) playerRigidbody.mass = 1;
+		else if (playerRigidbody.mass >= 10) playerRigidbody.mass = 10;
 
-        playerRigidbody.mass = playerScale / 2;
-
-        if (playerRigidbody.mass <= 1)
-            playerRigidbody.mass = 1;
-        else if (playerRigidbody.mass >= 10)
-            playerRigidbody.mass = 10;
-
-        playerSpeed = (playerSpeedFloor * playerScale * playerRigidbody.mass) /(playerRigidbody.mass * 1.5f); //change to a higher number for slower speed
+		//Force Multiplier Calculation
+		playerSpeed = (playerSpeedFloor * playerScale * playerRigidbody.mass) /(playerRigidbody.mass * 1.5f); //change to a higher number for slower speed
 		if (playerSpeed < playerSpeedFloor) playerSpeed = playerSpeedFloor;
 
 		jumpForceMultiplier = (jumpForceFloor * playerScale * playerRigidbody.mass) / (playerRigidbody.mass * 1.2f);
@@ -79,9 +82,8 @@ public class PlayerScript : MonoBehaviour
 		dashForceMultiplier = (dashForceFloor * playerScale * playerRigidbody.mass) / (playerRigidbody.mass * 1.2f);
 		if (dashForceMultiplier < dashForceFloor) dashForceMultiplier = dashForceFloor;
 
-        //Player Movement
-        if (transform.position.y <= -25)
-            transform.position = new Vector3(0, 1, 0);
+		//Player Movement
+		//if (transform.position.y <= -25) transform.position = new Vector3(0, 1, 0); //this is for resetting the player and if we need to do that, we have bigger design problems
 
 		if(current_vertical_offset < 0f) //S or Down when not using a joystick
 		{
@@ -99,26 +101,55 @@ public class PlayerScript : MonoBehaviour
 		followCamera.transform.Rotate(new Vector3(0, (current_horizontal_offset * rotationSpeed), 0), Space.World);
 
 		//Player Action Buttons
+
+		//Jump Logic
 		if(jump_down && !jumping)
 		{
+			//the maximum amount of time jump should affect the player is currently meant to be 1 second.
+			jumpSpoolTimer += deltaTime;
+			if (jumpSpoolTimer >= 1.5f)
+			{
+				jumping = true;
+				playerRigidbody.AddForce(playerRigidbody.transform.up * jumpForceMultiplier * (1 + jumpSpoolTimer), ForceMode.Impulse);
+				jumpSpoolTimer = 0.0f;
+			}
+		}
+		else if (!jump_down && jumpSpoolTimer > 0.0f)
+		{
 			jumping = true;
-			playerRigidbody.AddForce(playerRigidbody.transform.up * jumpForceMultiplier, ForceMode.Impulse);
+			playerRigidbody.AddForce(playerRigidbody.transform.up * jumpForceMultiplier * (1 + jumpSpoolTimer), ForceMode.Impulse);
+			jumpSpoolTimer = 0.0f;
 		}
 
+
+		//Dash Logic
 		if(dash_down && !dashing)
 		{
-			dashing = true;
-			playerRigidbody.AddForce(playerRigidbody.transform.forward * dashForceMultiplier, ForceMode.Impulse);
+			//the maximum amount of time jump should affect the player is currently meant to be 1 second.
+			dashSpoolTimer += deltaTime;
+			if (dashSpoolTimer >= 1.0f)
+			{
+				dashing = true;
+				playerRigidbody.AddForce(playerRigidbody.transform.forward * dashForceMultiplier * (1 + dashSpoolTimer), ForceMode.Impulse);
+				dashSpoolTimer = 0.0f;
+			}
+
 		}
+		else if (!dash_down && jumpSpoolTimer > 0.0f)
+		{
+            dashing = true;
+            playerRigidbody.AddForce(playerRigidbody.transform.forward * dashForceMultiplier * (1 + dashSpoolTimer), ForceMode.Impulse);
+            dashSpoolTimer = 0.0f;
+        }
 
 		//Update Dash state/timer
 		if(dashing)
 		{
-			dashTimer += Time.deltaTime;
-			if(dashTimer >= dashCooldownLength)
+			dashCooldownTimer += deltaTime;
+			if(dashCooldownTimer >= dashCooldownLength)
 			{
 				dashing = false;
-				dashTimer = 0.0f;
+				dashCooldownTimer = 0.0f;
 			}
 		}
 
@@ -152,16 +183,15 @@ public class PlayerScript : MonoBehaviour
 			*/
 			if (playerScale >= collidedObject.transform.localScale.x)
 			{
-				playerRigidbody.isKinematic = true;
+				//playerRigidbody.isKinematic = true;
 				//Resize the player
-				transform.localScale -= (collidedObject.transform.localScale * .5f);
+				transform.localScale -= (collidedObject.transform.localScale * .25f);
 				//Update internal scale variable for win calculation and such
 				playerScale = transform.localScale.x;
-                //Destroy to be replaced with a recycle command via the Resource Manager
-                //Destroy(collidedObject);
-                collidedObject.SetActive(false);
-                gameSpawner.recycleObject(collidedObject);
-				playerRigidbody.isKinematic = false;
+				//Recycle the object
+				collidedObject.SetActive(false);
+				gameSpawner.recycleObject(collidedObject);
+				//playerRigidbody.isKinematic = false;
 			}
 		}
 
@@ -173,26 +203,25 @@ public class PlayerScript : MonoBehaviour
 			*/
 			if (playerScale >= collidedObject.transform.localScale.x)
 			{
+				//playerRigidbody.isKinematic = true;
 				//Resize the player
 				transform.localScale += (collidedObject.transform.localScale * .1f);
 				//Update internal scale variable for win calculation and such
 				playerScale = transform.localScale.x;
-                //Destroy to be replaced with a recycle command via the Resource Manager
-                //Destroy(collidedObject);
-                collidedObject.SetActive(false);
-                gameSpawner.recycleObject(collidedObject);
-            }
-		}
-       
-
-    }
-    public void resetPlayer()
-    {
-        playerScale = 1;
-        playerRigidbody.mass = 1;
-        playerSpeed = playerSpeedFloor;
-        dashForceMultiplier = dashForceFloor;
-        jumpForceMultiplier = jumpForceFloor;
-        transform.position = new Vector3(0, 1, 0);
-    }
+				//Recycle the object
+				collidedObject.SetActive(false);
+				gameSpawner.recycleObject(collidedObject);
+				//playerRigidbody.isKinematic = false;
+			}
+		}  
+	}
+	/*public void resetPlayer()
+	{
+		playerScale = 1;
+		playerRigidbody.mass = 1;
+		playerSpeed = playerSpeedFloor;
+		dashForceMultiplier = dashForceFloor;
+		jumpForceMultiplier = jumpForceFloor;
+		transform.position = new Vector3(0, 1, 0);
+	}*/
 }
