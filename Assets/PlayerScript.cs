@@ -70,16 +70,19 @@ public class PlayerScript : MonoBehaviour
         else if (playerRigidbody.mass >= 10)
             playerRigidbody.mass = 10;
 
-        playerSpeed = (playerSpeedFloor * playerScale * playerRigidbody.mass) / 4;
+        playerSpeed = (playerSpeedFloor * playerScale * playerRigidbody.mass) /(playerRigidbody.mass * 1.5f); //change to a higher number for slower speed
 		if (playerSpeed < playerSpeedFloor) playerSpeed = playerSpeedFloor;
 
-		jumpForceMultiplier = (jumpForceFloor * playerScale * playerRigidbody.mass) / 2;
+		jumpForceMultiplier = (jumpForceFloor * playerScale * playerRigidbody.mass) / (playerRigidbody.mass * 1.2f);
 		if (jumpForceMultiplier < jumpForceFloor) jumpForceMultiplier = jumpForceFloor;
 
-		dashForceMultiplier = (dashForceFloor * playerScale * playerRigidbody.mass) / 2;
+		dashForceMultiplier = (dashForceFloor * playerScale * playerRigidbody.mass) / (playerRigidbody.mass * 1.2f);
 		if (dashForceMultiplier < dashForceFloor) dashForceMultiplier = dashForceFloor;
 
-		//Player Movement
+        //Player Movement
+        if (transform.position.y <= -25)
+            transform.position = new Vector3(0, 1, 0);
+
 		if(current_vertical_offset < 0f) //S or Down when not using a joystick
 		{
 			playerRigidbody.AddForce(-playerRigidbody.transform.forward * playerSpeed, ForceMode.Impulse);
