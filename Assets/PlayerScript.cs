@@ -28,7 +28,7 @@ public class PlayerScript : MonoBehaviour
 	private float dashForceMultiplier;
 	private float dashCooldownTimer = 0.0f;
 	private float dashCooldownLength = 3.0f;
-	
+
 	//Player Input Variables; Check the Input Manager found in Edit-> Project Settings-> Input for more.
 	private float current_horizontal_offset = 0.0f;
 	private float current_vertical_offset = 0.0f;
@@ -69,18 +69,18 @@ public class PlayerScript : MonoBehaviour
 		dash_down = Input.GetButton("Dash");
 
 		//Player Mass Calculation
-		playerRigidbody.mass = playerScale / 2.0f;
-		if (playerRigidbody.mass <= 1) playerRigidbody.mass = 1;
-		else if (playerRigidbody.mass >= 10) playerRigidbody.mass = 10;
+		playerRigidbody.mass = playerScale * 1.25f;
+		if (playerRigidbody.mass <= 1.0f) playerRigidbody.mass = 1.0f;
+		else if (playerRigidbody.mass >= 10.0f) playerRigidbody.mass = 10.0f;
 
 		//Force Multiplier Calculation
-		playerSpeed = (playerSpeedFloor * playerScale * playerRigidbody.mass) /(playerRigidbody.mass * 1.5f); //change to a higher number for slower speed
+		playerSpeed = (playerSpeedFloor * playerScale * playerRigidbody.mass) /(playerRigidbody.mass * 0.5f); //change to a higher number for slower speed
 		if (playerSpeed < playerSpeedFloor) playerSpeed = playerSpeedFloor;
 
-		jumpForceMultiplier = (jumpForceFloor * playerScale * playerRigidbody.mass) / (playerRigidbody.mass * 1.2f);
+		jumpForceMultiplier = (jumpForceFloor * playerScale * playerRigidbody.mass) / (playerRigidbody.mass * 0.85f);
 		if (jumpForceMultiplier < jumpForceFloor) jumpForceMultiplier = jumpForceFloor;
 
-		dashForceMultiplier = (dashForceFloor * playerScale * playerRigidbody.mass) / (playerRigidbody.mass * 1.2f);
+		dashForceMultiplier = (dashForceFloor * playerScale * playerRigidbody.mass) / (playerRigidbody.mass * 0.85f);
 		if (dashForceMultiplier < dashForceFloor) dashForceMultiplier = dashForceFloor;
 
 		//Player Movement
@@ -106,13 +106,9 @@ public class PlayerScript : MonoBehaviour
 		//Jump Logic
 		if(jump_down && !jumping)
 		{
-			//the maximum amount of time jump should affect the player is currently meant to be 1 second.
-			jumpSpoolTimer += deltaTime;
-			if (jumpSpoolTimer >= maxJumpSpoolTime)
+			if (jumpSpoolTimer < maxJumpSpoolTime)
 			{
-				jumping = true;
-				playerRigidbody.AddForce(playerRigidbody.transform.up * jumpForceMultiplier * (1 + jumpSpoolTimer), ForceMode.Impulse);
-				jumpSpoolTimer = 0.0f;
+				jumpSpoolTimer += deltaTime;
 			}
 		}
 		else if (!jump_down && jumpSpoolTimer > 0.0f)
@@ -122,21 +118,15 @@ public class PlayerScript : MonoBehaviour
 			jumpSpoolTimer = 0.0f;
 		}
 
-
 		//Dash Logic
 		if(dash_down && !dashing)
 		{
-			//the maximum amount of time jump should affect the player is currently meant to be 1 second.
-			dashSpoolTimer += deltaTime;
-			if (dashSpoolTimer >= maxDashSpoolTime)
+			if (dashSpoolTimer < maxDashSpoolTime)
 			{
-				dashing = true;
-				playerRigidbody.AddForce(playerRigidbody.transform.forward * dashForceMultiplier * (1 + dashSpoolTimer), ForceMode.Impulse);
-				dashSpoolTimer = 0.0f;
+				dashSpoolTimer += deltaTime;
 			}
-
 		}
-		else if (!dash_down && jumpSpoolTimer > 0.0f)
+		else if (!dash_down && dashSpoolTimer > 0.0f)
 		{
 			dashing = true;
 			playerRigidbody.AddForce(playerRigidbody.transform.forward * dashForceMultiplier * (1 + dashSpoolTimer), ForceMode.Impulse);
@@ -214,7 +204,7 @@ public class PlayerScript : MonoBehaviour
 				gameSpawner.recycleObject(collidedObject);
 				//playerRigidbody.isKinematic = false;
 			}
-		}  
+		}
 	}
 	/*public void resetPlayer()
 	{
