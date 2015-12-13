@@ -21,6 +21,7 @@ public class VictoryPoint : MonoBehaviour {
         if (collidedObject.tag == "Player")
         {
             Debug.Log("VICTORY!");
+            Application.LoadLevel("Level_1");
         }
     }
 }
