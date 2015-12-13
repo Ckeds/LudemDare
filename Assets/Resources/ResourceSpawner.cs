@@ -51,11 +51,13 @@ public class ResourceSpawner : MonoBehaviour
 		}
 		for (int i = 0; i < numBad; i++)
 		{
-			randX = Random.Range(-stageLength / 2, stageLength / 2);
-			randY = Random.Range(1, stageHeight);
-			randZ = Random.Range(-stageWidth / 2, stageWidth / 2);
+            randX = Random.Range(-stageLength / 2, stageLength / 2);
+            randY = Random.Range(1, stageHeight);
+            randZ = Random.Range(-stageWidth / 2, stageWidth / 2);
 
-			randScale = Random.Range(Player.GetComponent<PlayerScript>().playerScale * .75f, Player.GetComponent<PlayerScript>().playerScale * 1.0f);
+            
+
+            randScale = Random.Range(Player.GetComponent<PlayerScript>().playerScale * .75f, Player.GetComponent<PlayerScript>().playerScale * 1.0f);
 
 			GameObject obj = (GameObject)Instantiate(badResource);
 			obj.transform.position = new Vector3(randX, randY, randZ);
@@ -77,9 +79,23 @@ public class ResourceSpawner : MonoBehaviour
         float randZ;
         float randScale;
 
-        randX = Random.Range(-stageLength / 2, stageLength / 2);
+        //randX = Random.Range(-stageLength / 2, stageLength / 2);
+        //randY = Random.Range(1, stageHeight);
+        //randZ = Random.Range(-stageWidth / 2, stageWidth / 2);
+
+        randX = Random.Range(Player.transform.position.x - 50, Player.transform.position.x + 50);
         randY = Random.Range(1, stageHeight);
-        randZ = Random.Range(-stageWidth / 2, stageWidth / 2);
+        randZ = Random.Range(Player.transform.position.z - 50, Player.transform.position.z + 50);
+
+        if (randX >= stageWidth/2)
+            randX = (stageWidth/2) - 1;
+        else if (randX <= -stageWidth/2)
+            randX = (-stageWidth / 2) +1;
+
+        if (randX >= stageLength / 2)
+            randX = (stageLength / 2) - 1;
+        else if (randX <= -stageLength / 2)
+            randX = (-stageLength / 2) + 1;
 
         randScale = Random.Range(Player.GetComponent<PlayerScript>().playerScale * .75f, Player.GetComponent<PlayerScript>().playerScale * 1.25f);
         

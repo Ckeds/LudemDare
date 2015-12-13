@@ -6,7 +6,7 @@ public class PlayerScript : MonoBehaviour
 	//Player Attributes
 	public float playerSpeedFloor = 0.45f;
 	private float playerSpeed;
-	public float rotationSpeed = 1.25f;
+	public float rotationSpeed = 1.5f;
 	public float playerScale = 1.0f;
 	/*Resources are tagged as good and bad (literally, i.e. "Bad Resource") for the purpose of collision detection for the short-term.
 	 *As the player eats new good objects, increase scale by "some" modifier. (For now, we will increase our scale by 1/2 the collided object's scale).
@@ -15,7 +15,7 @@ public class PlayerScript : MonoBehaviour
 
 	//Jump Action Variables
 	private bool jumping = false;
-	public float jumpForceFloor = 10.0f;
+	public float jumpForceFloor = 1.0f;
 	private float jumpForceMultiplier;
 	private float jumpSpoolTimer = 0.0f;
 	private float maxJumpSpoolTime = 1.5f;
@@ -24,7 +24,7 @@ public class PlayerScript : MonoBehaviour
 	private bool dashing = false;
 	private float dashSpoolTimer = 0.0f;
 	private float maxDashSpoolTime = 1.0f;
-	public float dashForceFloor = 20.0f;
+	public float dashForceFloor = 1.0f;
 	private float dashForceMultiplier;
 	private float dashCooldownTimer = 0.0f;
 	private float dashCooldownLength = 3.0f;
@@ -84,7 +84,7 @@ public class PlayerScript : MonoBehaviour
 		if (dashForceMultiplier < dashForceFloor) dashForceMultiplier = dashForceFloor;
 
 		//Player Movement
-		//if (transform.position.y <= -25) transform.position = new Vector3(0, 1, 0); //this is for resetting the player and if we need to do that, we have bigger design problems
+		if (transform.position.y <= -25) transform.position = new Vector3(0, 1, 0); //this is for resetting the player and if we need to do that, we have bigger design problems
 
 		if(current_vertical_offset < 0f) //S or Down when not using a joystick
 		{
@@ -176,7 +176,7 @@ public class PlayerScript : MonoBehaviour
 			{
 				//playerRigidbody.isKinematic = true;
 				//Resize the player
-				transform.localScale -= (collidedObject.transform.localScale * .25f);
+				transform.localScale -= (collidedObject.transform.localScale * .5f);
 				//Update internal scale variable for win calculation and such
 				playerScale = transform.localScale.x;
 				//Recycle the object
