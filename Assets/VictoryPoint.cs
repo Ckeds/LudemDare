@@ -5,6 +5,7 @@ public class VictoryPoint : MonoBehaviour {
     // Class globals
     private Texture2D victoryNotification;
     private bool victory = false;
+    public string NextLevelName = "Level_1";
 
     // Use this for initialization
     void Start () {
@@ -34,7 +35,7 @@ public class VictoryPoint : MonoBehaviour {
         {
             Debug.Log("VICTORY!");
             victory = true;
-            Application.LoadLevel("Level_1");
+            Application.LoadLevel(NextLevelName);
         }
     }
 }

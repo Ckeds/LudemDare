@@ -15,8 +15,8 @@ public class ResourceSpawner : MonoBehaviour
 
     public int playerSpawnDist = 50;
 
-	public int numGood = 1000;
-	public int numBad = 1000;
+	public int numGood = 0;
+	public int numBad = 0;
 
 	List<GameObject> goodRes;
 	List<GameObject> badRes;
