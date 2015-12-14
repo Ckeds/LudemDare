@@ -7,11 +7,12 @@ public class Teleporter : MonoBehaviour
     public float teleY = 0;
     public float teleZ = 0;
 
+    private GameObject Player;
+
     // Use this for initialization
     void Start()
     {
-
-
+        Player = GameObject.FindGameObjectWithTag("Player");
     }
 
     // Update is called once per frame
@@ -21,11 +22,9 @@ public class Teleporter : MonoBehaviour
     }
     void OnTriggerEnter(Collider collision)
     {
-        var collidedObject = collision.gameObject;
-
-        if (collidedObject.tag == "Player")
+        if (collision.gameObject == Player)
         {
-
+            Player.transform.position = new Vector3(teleX, teleY, teleZ);
         }
     }
 }
