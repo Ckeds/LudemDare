@@ -4,21 +4,21 @@ using System.Collections;
 
 public class UIScore : MonoBehaviour
 {
-    private GameObject Player;
-    Text text;
-    int score;
+	private PlayerScript Player;
+	private Text text;
+	private int score;
 
-    // Use this for initialization
-    void Awake ()
-    {
-        Player = GameObject.FindGameObjectWithTag("Player");
-        text = GetComponent<Text>();
-    }
+	// Use this for initialization
+	void Awake ()
+	{
+		Player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerScript>();
+		text = GetComponent<Text>();
+	}
 	
 	// Update is called once per frame
 	void Update ()
-    {
-        score = (int)((Player.GetComponent<PlayerScript>().playerScale - 1)*100);
-        text.text = "Score: " + score;
+	{
+		score = (int)((Player.playerScale - 1)*100);
+		text.text = "Score: " + score;
 	}
 }

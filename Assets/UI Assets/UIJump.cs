@@ -4,21 +4,23 @@ using System.Collections;
 
 public class UIJump : MonoBehaviour
 {
-    private GameObject Player;
-    Text text;
-    int jump;
+	private PlayerScript Player;
+	private Text text;
+	private float jump;
+	private float playerMaxJumpSpool;
 
-    // Use this for initialization
-    void Awake ()
-    {
-        Player = GameObject.FindGameObjectWithTag("Player");
-        text = GetComponent<Text>();
-    }
+	// Use this for initialization
+	void Awake ()
+	{
+		Player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerScript>();
+		playerMaxJumpSpool = Player.GetMaxJumpSpoolTime();
+		text = GetComponent<Text>();
+	}
 	
 	// Update is called once per frame
 	void Update ()
-    {
-        jump = (int)(Player.GetComponent<PlayerScript>().GetJumpTime() * 100);
-        text.text = "Jump: " + jump;
+	{
+		jump = (Player.GetJumpTime() / playerMaxJumpSpool) * 100;
+		text.text = "Jump Charge: " + jump + "%";
 	}
 }

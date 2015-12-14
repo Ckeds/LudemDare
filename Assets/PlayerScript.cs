@@ -8,7 +8,7 @@ public class PlayerScript : MonoBehaviour
 	private float playerSpeed;
 	public float rotationSpeed = 1.5f;
 	public float playerScale = 1.0f;
-    public int playerScore = 0;
+	public int playerScore = 0;
 	/*Resources are tagged as good and bad (literally, i.e. "Bad Resource") for the purpose of collision detection for the short-term.
 	 *As the player eats new good objects, increase scale by "some" modifier. (For now, we will increase our scale by 1/2 the collided object's scale).
 	 *Bad things decrease scale; when the scale hits a certain threshold the level should be able to end.
@@ -18,17 +18,21 @@ public class PlayerScript : MonoBehaviour
 	private bool jumping = false;
 	public float jumpForceFloor = 1.0f;
 	private float jumpForceMultiplier; 
-	private float jumpSpoolTimer = 0.0f; public float GetJumpTime() { return jumpSpoolTimer; } //needed for UI
-    private float maxJumpSpoolTime = 1.5f;
+	private float jumpSpoolTimer = 0.0f;
+	public float GetJumpTime() { return jumpSpoolTimer; } //needed for UI
+	private float maxJumpSpoolTime = 1.5f;
+	public float GetMaxJumpSpoolTime() { return maxJumpSpoolTime; } //needed for UI
 
 	//Dash Action Variables
 	private bool dashing = false;
-	private float dashSpoolTimer = 0.0f; public float GetDashTime() { return dashSpoolTimer; } //needed for UI
-    private float maxDashSpoolTime = 1.0f;
+	private float dashSpoolTimer = 0.0f;
+	public float GetDashTime() { return dashSpoolTimer; } //needed for UI
+	private float maxDashSpoolTime = 1.0f;
+	public float GetMaxDashSpoolTime() { return maxDashSpoolTime; } //needed for UI
 	public float dashForceFloor = 1.0f;
 	private float dashForceMultiplier; 
-    private float dashCooldownTimer = 0.0f;
-	private float dashCooldownLength = 3.0f;
+	private float dashCooldownTimer = 0.0f;
+	private float dashCooldownLength = 2.0f;
 
 	//Player Input Variables; Check the Input Manager found in Edit-> Project Settings-> Input for more.
 	private float current_horizontal_offset = 0.0f;
@@ -60,10 +64,10 @@ public class PlayerScript : MonoBehaviour
 	// Update is called once per frame; FixedUpdate per physics step
 	void FixedUpdate ()
 	{
-        playerScore = (int)(playerScale - 1) * 100;
+		playerScore = (int)(playerScale - 1) * 100;
 
-        //Time Variable for use with incrementing timers
-        var deltaTime = Time.deltaTime;
+		//Time Variable for use with incrementing timers
+		var deltaTime = Time.deltaTime;
 
 		//Update Input variables
 		current_horizontal_offset = Input.GetAxis("Horizontal");
@@ -154,6 +158,8 @@ public class PlayerScript : MonoBehaviour
 																	transform.position.z + (transform.forward.z * -5f * playerScale)
 																	),
 														playerSpeed);
+		//Camera nearPlane update
+		//followCamera.nearClipPlane = Vector3.Distance(transform.position, followCamera.transform.position) * 0.5f;
 	}
 
 	void OnCollisionEnter(Collision collision)
@@ -185,9 +191,9 @@ public class PlayerScript : MonoBehaviour
 				//Recycle the object
 				collidedObject.SetActive(false);
 				gameSpawner.recycleObject(collidedObject);
-                //playerRigidbody.isKinematic = false;
+				//playerRigidbody.isKinematic = false;
 
-                
+				
 			}
 		}
 
@@ -207,17 +213,8 @@ public class PlayerScript : MonoBehaviour
 				//Recycle the object
 				collidedObject.SetActive(false);
 				gameSpawner.recycleObject(collidedObject);
-                //playerRigidbody.isKinematic = false;
+				//playerRigidbody.isKinematic = false;
 			}
 		}
 	}
-	/*public void resetPlayer()
-	{
-		playerScale = 1;
-		playerRigidbody.mass = 1;
-		playerSpeed = playerSpeedFloor;
-		dashForceMultiplier = dashForceFloor;
-		jumpForceMultiplier = jumpForceFloor;
-		transform.position = new Vector3(0, 1, 0);
-	}*/
 }

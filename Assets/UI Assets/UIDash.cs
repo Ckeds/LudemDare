@@ -4,21 +4,23 @@ using System.Collections;
 
 public class UIDash : MonoBehaviour
 {
-    private GameObject Player;
-    Text text;
-    int dash;
+	private PlayerScript Player;
+	private Text text;
+	private float dash;
+	private float maxDashSpool;
 
-    // Use this for initialization
-    void Awake ()
-    {
-        Player = GameObject.FindGameObjectWithTag("Player");
-        text = GetComponent<Text>();
-    }
+	// Use this for initialization
+	void Awake ()
+	{
+		Player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerScript>();
+		maxDashSpool = Player.GetMaxDashSpoolTime();
+		text = GetComponent<Text>();
+	}
 	
 	// Update is called once per frame
 	void Update ()
-    {
-        dash = (int)(Player.GetComponent<PlayerScript>().GetDashTime() * 100);
-        text.text = "Dash: " + dash;
+	{
+		dash = (Player.GetDashTime() / maxDashSpool) * 100;
+		text.text = "Dash Charge: " + dash + "%";
 	}
 }
