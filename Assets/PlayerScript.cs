@@ -185,7 +185,7 @@ public class PlayerScript : MonoBehaviour
 			{
 				//playerRigidbody.isKinematic = true;
 				//Resize the player
-				transform.localScale -= (collidedObject.transform.localScale * .5f);
+				transform.localScale -= (collidedObject.transform.localScale * .25f);
 				//Update internal scale variable for win calculation and such
 				playerScale = transform.localScale.x;
 				//Recycle the object

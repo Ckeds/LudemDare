@@ -21,6 +21,8 @@ public class ResourceSpawner : MonoBehaviour
 	public List<GameObject> goodRes;
 	public List<GameObject> badRes;
 
+    public bool recyleStuff = false;
+
 	// Use this for initialization
 	void Start ()
 	{
@@ -119,8 +121,8 @@ public class ResourceSpawner : MonoBehaviour
 
 		if (o.GetComponent<Rigidbody>().mass >= 10)
 			o.GetComponent<Rigidbody>().mass = 10;
-
-		o.SetActive(true);
+        if(recyleStuff)
+		    o.SetActive(true);
 	}
 	void resetGame()
 	{

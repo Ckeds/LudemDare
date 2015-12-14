@@ -19,6 +19,6 @@ public class UIScore : MonoBehaviour
 	void Update ()
 	{
 		score = (int)((Player.playerScale - 1)*100);
-		text.text = "Score: " + score;
+		text.text = "Size: " + score;
 	}
 }

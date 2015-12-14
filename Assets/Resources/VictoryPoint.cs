@@ -31,7 +31,7 @@ public class VictoryPoint : MonoBehaviour {
 		{
 			Debug.Log("VICTORY!");
 			victory = true;
-			Application.LoadLevel(NextLevelName);
+			//Application.LoadLevel(NextLevelName);
 		}
 	}
 }
