@@ -18,8 +18,8 @@ public class ResourceSpawner : MonoBehaviour
 	public int numGood = 0;
 	public int numBad = 0;
 
-	List<GameObject> goodRes;
-	List<GameObject> badRes;
+	public List<GameObject> goodRes;
+	public List<GameObject> badRes;
 
 	// Use this for initialization
 	void Start ()
