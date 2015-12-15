@@ -25,7 +25,7 @@ You play as a blob that is out to consume everything in sight! Absorb smaller ob
 
 Character movement takes place via a joystick (since it technically isn't a button), and the blob can jump and dash using two corresponding action buttons.
 
-The player will win the level once they have reached a certain size, though they will have a predetermined amount of time in which to reach said size.
+The player will win the level once they reach a fixed goal point in a level. The player must use their size, jumping and dashing to solve puzzles in the level.
 
 The blob can only consume objects smaller than itself, and certain objects and hazards will cause the blob to decrease in size.
 
@@ -36,3 +36,8 @@ Various power-up items may/will (time permitting) cause various positive effects
   -More than one level.
 
   -Absorbed resources float inside the player.
+
+##Known issues:
+
+  -The player camera currently clips through the environment.
+  -The UI buttons currently do not do anything.
