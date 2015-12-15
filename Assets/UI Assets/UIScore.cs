@@ -18,7 +18,7 @@ public class UIScore : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		score = (int)((Player.playerScale - 1)*100);
+		score = (int)((Player.playerScale)*100);
 		text.text = "Size: " + score;
 	}
 }
