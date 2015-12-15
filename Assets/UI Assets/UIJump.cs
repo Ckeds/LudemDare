@@ -6,7 +6,7 @@ public class UIJump : MonoBehaviour
 {
 	private PlayerScript Player;
 	private Text text;
-	private float jump;
+	private int jump;
 	private float playerMaxJumpSpool;
 
 	// Use this for initialization
@@ -20,7 +20,7 @@ public class UIJump : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		jump = (Player.GetJumpTime() / playerMaxJumpSpool) * 100;
+		jump = (int)((Player.GetJumpTime() / playerMaxJumpSpool) * 100);
 		text.text = "Jump Charge: " + jump + "%";
 	}
 }

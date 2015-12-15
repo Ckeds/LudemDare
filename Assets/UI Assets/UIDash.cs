@@ -6,7 +6,7 @@ public class UIDash : MonoBehaviour
 {
 	private PlayerScript Player;
 	private Text text;
-	private float dash;
+	private int dash;
 	private float maxDashSpool;
 
 	// Use this for initialization
@@ -16,11 +16,11 @@ public class UIDash : MonoBehaviour
 		maxDashSpool = Player.GetMaxDashSpoolTime();
 		text = GetComponent<Text>();
 	}
-	
+
 	// Update is called once per frame
 	void Update ()
 	{
-		dash = (Player.GetDashTime() / maxDashSpool) * 100;
+		dash = (int)((Player.GetDashTime() / maxDashSpool) * 100);
 		text.text = "Dash Charge: " + dash + "%";
 	}
 }
